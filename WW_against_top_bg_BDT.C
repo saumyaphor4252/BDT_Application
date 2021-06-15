@@ -51,6 +51,8 @@ float loc_dphijj;
 float loc_pTWW;
 float loc_njet;
 
+int loc_CleanJet_jetIdx_0;
+
 // Variables from the tree
 
 float loc0_mll;
@@ -74,8 +76,16 @@ float loc0_detajj;
 float loc0_dphijj;
 float loc0_pTWW;
 float loc0_njet;
-float loc0_CleanJet_jetIdx[100];
 
+int loc0_CleanJet_jetIdx[100];
+
+float bVeto(float* Jet_btagDeepB, int CleanJet_jetIdx)
+{
+    if (CleanJet_jetIdx >=0)
+        return Jet_btagDeepB[CleanJet_jetIdx];
+    else
+        return -2;
+}
 
 void initmyreaderBDTG4D3(TTree* tree)
 {
@@ -161,7 +171,7 @@ float WW_against_top_bg_BDT(int entry, int nclass)
     loc_CleanJet_pt_0 = loc0_CleanJet_pt[0];
     loc_CleanJet_pt_1 = loc0_CleanJet_pt[1];
     loc_CleanJet_eta_0 = loc0_CleanJet_eta[0];
-    loc_Jet_btagDeepB_CleanJet_jetIdx_0 = loc0_Jet_btagDeepB[loc0_CleanJet_jetIdx[0]];
+    loc_Jet_btagDeepB_CleanJet_jetIdx_0 = bVeto(loc0_Jet_btagDeepB, loc0_CleanJet_jetIdx[0]);
     loc_CleanJet_eta_1 = loc0_CleanJet_eta[1];
     loc_mT2 = loc0_mT2;
     loc_mjj = loc0_mjj;
