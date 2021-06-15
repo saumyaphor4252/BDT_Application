@@ -29,11 +29,11 @@ TString name_temp = "";
 
 float loc_mll;
 float loc_PuppiMET_pt; 
-float loc_CleanJet_pt[0];
-float loc_CleanJet_pt[1];
-float loc_CleanJet_eta[0];
-float loc_Jet_btagDeepB[CleanJet_jetIdx[0]];
-float loc_CleanJet_eta[1];
+float loc_CleanJet_pt_0;
+float loc_CleanJet_pt_1;
+float loc_CleanJet_eta_0;
+float loc_Jet_btagDeepB_CleanJet_jetIdx_0;
+float loc_CleanJet_eta_1;
 float loc_mT2;
 float loc_mjj;
 float loc_pt1;
@@ -51,15 +51,13 @@ float loc_dphijj;
 float loc_pTWW;
 float loc_njet;
 
-// Variables fed into the BDT
+// Variables from the tree
 
 float loc0_mll;
 float loc0_PuppiMET_pt; 
-float loc0_CleanJet_pt[0];
-float loc0_CleanJet_pt[1];
-float loc0_CleanJet_eta[0];
-float loc0_Jet_btagDeepB[CleanJet_jetIdx[0]];
-float loc0_CleanJet_eta[1];
+float loc0_CleanJet_pt[100];
+float loc0_CleanJet_eta[100];
+float loc0_Jet_btagDeepB[100];
 float loc0_mT2;
 float loc0_mjj;
 float loc0_pt1;
@@ -76,17 +74,16 @@ float loc0_detajj;
 float loc0_dphijj;
 float loc0_pTWW;
 float loc0_njet;
+float loc0_CleanJet_jetIdx[100];
 
 
 void initmyreaderBDTG4D3(TTree* tree)
 {
     tree->SetBranchAddress("mll", &loc0_mll);
     tree->SetBranchAddress("PuppiMET_pt", &loc0_PuppiMET_pt);	
-    tree->SetBranchAddress("CleanJet_pt[0]", &loc0_CleanJet_pt[0]);	
-    tree->SetBranchAddress("CleanJet_pt[1]", &loc0_CleanJet_pt[1]);	
-    tree->SetBranchAddress("CleanJet_eta[0]",&loc0_CleanJet_eta[0]);	
-    tree->SetBranchAddress("Jet_btagDeepB[CleanJet_jetIdx[0]]", &loc0_Jet_btagDeepB[CleanJet_jetIdx[0]]);	
-    tree->SetBranchAddress("CleanJet_eta[1]", &loc0_CleanJet_eta[1]);	
+    tree->SetBranchAddress("CleanJet_pt", &loc0_CleanJet_pt);	
+    tree->SetBranchAddress("CleanJet_eta",&loc0_CleanJet_eta);	
+    tree->SetBranchAddress("Jet_btagDeepB", &loc0_Jet_btagDeepB);	
     tree->SetBranchAddress("mT2", &loc0_mT2);	
     tree->SetBranchAddress("mjj", &loc0_mjj);	
     tree->SetBranchAddress("pt1", &loc0_pt1);	
@@ -103,21 +100,22 @@ void initmyreaderBDTG4D3(TTree* tree)
     tree->SetBranchAddress("dphijj", &loc0_dphijj);	
     tree->SetBranchAddress("pTWW", &loc0_pTWW);
     tree->SetBranchAddress("njet", &loc0_njet);
+    tree->SetBranchAddress("CleanJet_jetIdx", &loc0_CleanJet_jetIdx);
 
     // The variables' names and their order have to agree with those defined in TMVAClassification.C file
     myreaderBDTG4D3->AddVariable("mll", &loc_mll);
     myreaderBDTG4D3->AddVariable("PuppiMET_pt", &loc_PuppiMET_pt);	
-    myreaderBDTG4D3->AddVariable("CleanJet_pt[0]", &loc_CleanJet_pt[0]);	
-    myreaderBDTG4D3->AddVariable("CleanJet_pt[1]", &loc_CleanJet_pt[1]);	
-    myreaderBDTG4D3->AddVariable("CleanJet_eta[0]", &loc_CleanJet_eta[0]);	
-    myreaderBDTG4D3->AddVariable("Jet_btagDeepB[CleanJet_jetIdx[0]]", &loc_Jet_btagDeepB[CleanJet_jetIdx[0]]);	
-    myreaderBDTG4D3->AddVariable("CleanJet_eta[1]", &loc_CleanJet_eta[1]);	
+    myreaderBDTG4D3->AddVariable("Alt$(CleanJet_pt[0],0)", &loc_CleanJet_pt_0);	
+    myreaderBDTG4D3->AddVariable("Alt$(CleanJet_pt[1],0)", &loc_CleanJet_pt_1);	
+    myreaderBDTG4D3->AddVariable("Alt$(CleanJet_eta[0],0)", &loc_CleanJet_eta_0);	
+    myreaderBDTG4D3->AddVariable("Alt$(Jet_btagDeepB[CleanJet_jetIdx[0]],-2)", &loc_Jet_btagDeepB_CleanJet_jetIdx_0);	
+    myreaderBDTG4D3->AddVariable("Alt$(CleanJet_eta[1],0)", &loc_CleanJet_eta_1);	
     myreaderBDTG4D3->AddVariable("mT2", &loc_mT2);	
     myreaderBDTG4D3->AddVariable("mjj", &loc_mjj);	
     myreaderBDTG4D3->AddVariable("pt1", &loc_pt1);	
     myreaderBDTG4D3->AddVariable("pt2", &loc_pt2);	
     myreaderBDTG4D3->AddVariable("mth", &loc_mth);	
-    myreaderBDTG4D3->AddVariable("dphilmet", &dphilmet);	
+    myreaderBDTG4D3->AddVariable("dphilmet", &loc_dphilmet);	
     myreaderBDTG4D3->AddVariable("dphilmet1", &loc_dphilmet1);	
     myreaderBDTG4D3->AddVariable("mtw1", &loc_mtw1);	
     myreaderBDTG4D3->AddVariable("mtw2", &loc_mtw2);	
@@ -160,11 +158,11 @@ float WW_against_top_bg_BDT(int entry, int nclass)
   
     loc_mll = loc0_mll;
     loc_PuppiMET_pt = loc0_PuppiMET_pt;
-    loc_CleanJet_pt[0] = loc0_CleanJet_pt[0];
-    loc_CleanJet_pt[1] = loc0_CleanJet_pt[1];
-    loc_CleanJet_eta[0] = loc0_CleanJet_eta[0];
-    loc_Jet_btagDeepB[CleanJet_jetIdx[0]] = loc0_Jet_btagDeepB[CleanJet_jetIdx[0]];
-    loc_CleanJet_eta[1] = loc0_CleanJet_eta[1];
+    loc_CleanJet_pt_0 = loc0_CleanJet_pt[0];
+    loc_CleanJet_pt_1 = loc0_CleanJet_pt[1];
+    loc_CleanJet_eta_0 = loc0_CleanJet_eta[0];
+    loc_Jet_btagDeepB_CleanJet_jetIdx_0 = loc0_Jet_btagDeepB[loc0_CleanJet_jetIdx[0]];
+    loc_CleanJet_eta_1 = loc0_CleanJet_eta[1];
     loc_mT2 = loc0_mT2;
     loc_mjj = loc0_mjj;
     loc_pt1 = loc0_pt1;
